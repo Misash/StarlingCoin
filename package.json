@@ -4,7 +4,8 @@
   "description": "![gif](https://github.com/Misash/MyBlockchain/assets/70419764/47c43b93-f063-447d-bc70-8be78664c02a)",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,7 @@
   },
   "homepage": "https://github.com/Misash/MyBlockchain#readme",
   "dependencies": {
+    "chalk": "^2.4.2",
     "crypto-js": "^4.1.1"
   }
 }

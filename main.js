@@ -1,6 +1,16 @@
 //StarlingCoin by Misash
 
 const sha256 = require('crypto-js/sha256')
+const chalk = require('chalk');
+
+const startlingLogo = `
+          __                 __  .__  .__                
+  _______/  |______ ________/  |_|  | |__| ____    ____  
+ /  ___/\   __\__  \\_  __ \   __\  | |  |/    \  / ___\ 
+ \___ \  |  |  / __ \|  | \/|  | |  |_|  |   |  \/ /_/  >
+/____  > |__| (____  /__|   |__| |____/__|___|  /\___  / 
+     \/            \/                         \//_____/ 
+`;
 
 class Block{
 
@@ -11,14 +21,31 @@ class Block{
         this.data = data;
         this.previousHash = previousHash;
 
-        this.hash = this.calculateHash();
+        //pre-defined nonce
+        this.nonce = 0;
 
+        this.hash = this.calculateHash();
     }
 
     calculateHash(){
-        let x = this.index + this.previousHash + this.timestamp + JSON.stringify(this.data);
+        let x = this.index + this.previousHash + this.timestamp + JSON.stringify(this.data) + this.nonce;
         x = sha256(x).toString();
         return x;
+    }
+
+    mineBlock(difficulty){
+
+        // loop while hash not start with zeros of difficulty length
+        while(this.hash.substring(0,difficulty) !== "0".repeat(difficulty)){
+
+            //increment nonce
+            this.nonce++;
+
+            //recalculate hash
+            this.hash = this.calculateHash();
+        }
+
+        console.log("Block mined! ", this.hash);
     }
 
 }
@@ -26,8 +53,10 @@ class Block{
 
 class Blockchain{
 
-    constructor(){
+    constructor(difficulty){
         this.chain = [this.createGenesisBlock()];
+        this.difficulty = difficulty;
+        console.log(chalk.cyan(startlingLogo));
         // console.log("chain: ", this.chain);
     }
 
@@ -41,7 +70,11 @@ class Blockchain{
 
     addBlock(newBlock){
         newBlock.previousHash = this.getlatestBlock().hash;
-        newBlock.hash = newBlock.calculateHash();
+        // newBlock.hash = newBlock.calculateHash();
+
+        //try get the hash difficulty
+        newBlock.mineBlock(this.difficulty);
+
         this.chain.push(newBlock);
     }
 
@@ -52,13 +85,10 @@ class Blockchain{
 
             //check hash
             if( currentBlock.hash !== currentBlock.calculateHash()){
-                
-                console.log("hash", currentBlock.hash," - " ,currentBlock.calculateHash()," - " , currentBlock.calculateHash())
                 return false;
             }
             //check prevhash
             if( currentBlock.previousHash !== prevBlock.hash){
-                console.log("prevhash",currentBlock)
                 return false;
             }
         }
@@ -70,27 +100,31 @@ class Blockchain{
 
 
 //create blockchain
-let StarlingCoin = new Blockchain()
+let StarlingCoin = new Blockchain(4)
 
 
 //adding blocks to the blockchain
+console.time('Mining block 1');
 StarlingCoin.addBlock(new Block (1, "1691352528", {amount: 20}));
+console.timeEnd('Mining block 1');
+
+
+console.time("Mining block 2")
 StarlingCoin.addBlock(new Block (2, "1691352542", {amount: 50}));
+console.timeEnd('Mining block 2');
+
+console.time("Mining block 3")
 StarlingCoin.addBlock(new Block (3, "1691352550", {amount: 80}));
-
-// StarlingCoin.addBlock(new Block (1, "01/01/2018", {amount: 20}));
-// StarlingCoin.addBlock(new Block (2, "01/01/2018", {amount: 50}));
-// StarlingCoin.addBlock(new Block (3, "01/01/2018", {amount: 80}));
-
+console.timeEnd("Mining block 3")
 
 // console.log(StarlingCoin.chain)
 
-console.log("Chain valid: ", StarlingCoin.isChainValid());
+console.log("Chain valid?: ", StarlingCoin.isChainValid());
+
 
 //attempting hack block
 StarlingCoin.chain[1].data = { amount: 100000};
 StarlingCoin.chain[1].hash = StarlingCoin.chain[1].calculateHash();
-
 
 console.log("Chain valid: ", StarlingCoin.isChainValid());
 
