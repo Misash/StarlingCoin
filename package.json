@@ -1,0 +1,22 @@
+{
+  "name": "myblockchain",
+  "version": "1.0.0",
+  "description": "![gif](https://github.com/Misash/MyBlockchain/assets/70419764/47c43b93-f063-447d-bc70-8be78664c02a)",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Misash/MyBlockchain.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Misash/MyBlockchain/issues"
+  },
+  "homepage": "https://github.com/Misash/MyBlockchain#readme",
+  "dependencies": {
+    "crypto-js": "^4.1.1"
+  }
+}
