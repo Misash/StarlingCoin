@@ -12,11 +12,13 @@ class Block{
         this.previousHash = previousHash;
 
         this.hash = this.calculateHash();
+
     }
 
     calculateHash(){
         let x = this.index + this.previousHash + this.timestamp + JSON.stringify(this.data);
-        return sha256(x).toString();
+        x = sha256(x).toString();
+        return x;
     }
 
 }
@@ -39,20 +41,24 @@ class Blockchain{
 
     addBlock(newBlock){
         newBlock.previousHash = this.getlatestBlock().hash;
+        newBlock.hash = newBlock.calculateHash();
         this.chain.push(newBlock);
     }
 
     isChainValid(){
         for(let i = 1; i < this.chain.length; i++){
-            const currentBlock = chain[i];
-            const prevBlock = chain[i-1];
+            const currentBlock = this.chain[i];
+            const prevBlock = this.chain[i-1];
 
             //check hash
-            if( currentBlock.hash != currentBlock.calculateHash()){
+            if( currentBlock.hash !== currentBlock.calculateHash()){
+                
+                console.log("hash", currentBlock.hash," - " ,currentBlock.calculateHash()," - " , currentBlock.calculateHash())
                 return false;
             }
             //check prevhash
-            if( currentBlock.previousHash != prevBlock.hash){
+            if( currentBlock.previousHash !== prevBlock.hash){
+                console.log("prevhash",currentBlock)
                 return false;
             }
         }
@@ -72,5 +78,20 @@ StarlingCoin.addBlock(new Block (1, "1691352528", {amount: 20}));
 StarlingCoin.addBlock(new Block (2, "1691352542", {amount: 50}));
 StarlingCoin.addBlock(new Block (3, "1691352550", {amount: 80}));
 
+// StarlingCoin.addBlock(new Block (1, "01/01/2018", {amount: 20}));
+// StarlingCoin.addBlock(new Block (2, "01/01/2018", {amount: 50}));
+// StarlingCoin.addBlock(new Block (3, "01/01/2018", {amount: 80}));
 
-console.log(StarlingCoin.chain)
+
+// console.log(StarlingCoin.chain)
+
+console.log("Chain valid: ", StarlingCoin.isChainValid());
+
+//attempting hack block
+StarlingCoin.chain[1].data = { amount: 100000};
+StarlingCoin.chain[1].hash = StarlingCoin.chain[1].calculateHash();
+
+
+console.log("Chain valid: ", StarlingCoin.isChainValid());
+
+
